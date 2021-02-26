@@ -1,0 +1,19 @@
+.logoContainer{
+  display: grid;
+  grid-template-columns: max-content min-content;
+  vertical-align: middle;
+}
+.logoText_small {
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 36px;
+  margin: 1rem;
+}
+.logoText {
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 72px;
+  margin: 1rem;
+}

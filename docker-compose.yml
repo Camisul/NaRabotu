@@ -1,0 +1,29 @@
+version: "3.8"
+services:
+  frontend:
+    build: ./frontend/
+    ports:
+       - "3000:3000"
+    depends_on:
+      - redis
+      - backend
+    environment:
+      - REDIS=redis
+      
+  backend:
+    build: ./backend/
+    ports:
+       - "8000:8000"
+    depends_on:
+      - redis
+    environment:
+      - REDIS=redis
+
+  redis:
+    image: "redis:alpine"
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis_conf:/usr/local/etc/redis
+   

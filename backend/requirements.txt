@@ -1,0 +1,6 @@
+redis
+requests
+bs4
+lxml
+Flask
+markdownify
