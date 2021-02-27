@@ -71,7 +71,7 @@ def parse_salary(salary):
     regex = r"(\d+\s?\d+)"
     match = re.search(regex, salary)
     base, = match.groups()
-    int_amt = int(base.replace(' ','')) 
+    int_amt = int(base.replace('\u202f', '').replace(' ','')) 
     return {"amount": int_amt, "currency": currency}
 
 def get_offers_links(html, all_links):

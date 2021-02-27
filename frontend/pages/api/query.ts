@@ -41,6 +41,28 @@ export interface ApiResponse {
   vacancies: Vacancy[]
 }
 
+function makeGraph(sample: Array<number>): Map<string, number>  {
+  const min = Math.min(...sample);
+  const max = Math.max(...sample);
+  const step = (max - min) / 5;
+  const groups = new Array(5).fill(0).map((e, ii) => [min + step * ii, min + (step * (ii + 1))]);
+  const mkStrRange = (l: number, h: number): string => Math.floor(l / 1000) + 'k-' + Math.floor(h / 1000) + 'k';
+  const mkPrc = (l: number, r: any[]): number => l / (r.length * 0.01);
+  const res = new Map<string, number>(
+      groups.map(([l, h]) =>
+          [
+              mkStrRange(l, h),
+              mkPrc(
+                  sample.filter(e => e >= l && e <= h).length,
+                  sample
+              )
+          ]
+      )
+  );
+  return res;
+}
+
+
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const mock: ApiResponse = {
     total: 1337,
@@ -151,7 +173,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const pre = Math.floor(salaries.length * 0.01);
     const top1 = salaries.sort((a, b) => b - a).slice(0, pre);
     const unic = new Set();
-    const companies = all_vac.map(e => e['company']).filter(e => !!e).forEach(e => unic.add(e['name']));
+    //const companies = all_vac.map(e => e['company']).filter(e => !!e).forEach(e => unic.add(e['name']));
     let response: ApiResponse = {
       total: 0,
       adverts: 0,
@@ -169,7 +191,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     response.mean_salary = salaries.reduce(reducer) /  salaries.length;
     response.top_dollar = top1.length;
     response.unique_companies = unic.size;
-    response.graph = mock.graph;
+    response.graph = {data: [...makeGraph(salaries)]}
     res.status(200).json(response);
     return;
   }

@@ -44,6 +44,7 @@ const processData = (_data: Map<string, number>) => {
   dataset.label = 'Распределение деняг',
   dataset.data = values;
 
+
   ret.datasets = [
     dataset
   ];
@@ -51,7 +52,7 @@ const processData = (_data: Map<string, number>) => {
   return ret;
 }
 const VerticalBar = ({ data }: ChartProps) => {
-
+  if(!Object.keys(data).length) { return null; }
   const processed = processData(data);
   return (
     <div className="">
