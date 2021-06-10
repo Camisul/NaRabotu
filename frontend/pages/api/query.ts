@@ -73,7 +73,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     graph: {
       data: [...new Map<string, number>(
         [
-          ['0-10k', 10],
+          ['-10k', 10],
           ['10k-20k', 20],
           ['30k-45k', 30],
           ['45k-50k', 20],
@@ -151,9 +151,16 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       res.status(400).json({'error': 'bad request'});
       return;
     }
+    console.log('Gruzum nhoooy');
+    const ok = await fetch('http://backend:8000/api/fetch_more', {
+      method: 'POST',
+      body: JSON.stringify({query: json.str}),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).then(r =>r.text());
+    console.log(ok);
     const index = await get('index');
-
-    
     if(!index) {
       
       res.status(500).json({
@@ -167,7 +174,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       return JSON.parse(x);
     }));
     //@ts-ignore
-    all_vac = all_vac.filter(e => !!e && !!e['company']);
+    all_vac = all_vac.filter(e => !!e && !!e['company'] );
+    //@ts-ignore
+    const test = (str, a ,b ) => {
+      const re = new RegExp(str, 'i');
+      return re.test(a) || re.test(b);
+    } 
+    //@ts-ignore
+    all_vac = all_vac.filter(e => test(json.str, e.title, e.body))
+
 
     const salaries = all_vac.map(e => e['salary']).filter(e => e['currency'] == 'RUB').map(e => e['amount']);
     const pre = Math.floor(salaries.length * 0.01);

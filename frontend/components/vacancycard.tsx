@@ -3,6 +3,17 @@ import { Vacancy } from "../pages/api/query";
 
 const getSymbol = (s) => ({'RUB': '₽', 'USD': '$', 'EUR': '€'})[s]
 const numFmt = (n: number): string => new Intl.NumberFormat('ru-RU').format(n);
+
+const getUsdToRub = async () => {
+  if(!window.usd2rub) {
+    const resp = await fetch('https://www.cbr-xml-daily.ru/daily_json.js').then(e => e.text());
+    const o = JSON.parse(resp);
+    //@ts-ignore
+    const usdt= o.Valute.USD.Value;
+    window.usd2rub = usdt;
+  }
+  return window.usd2rub;
+}
 const VacancyCard = ({company, title, salary, isAdvert, link}: Vacancy) => {
   const [inRub, setInRub] = useState(0);
   
@@ -10,10 +21,7 @@ const VacancyCard = ({company, title, salary, isAdvert, link}: Vacancy) => {
     if(salary.currency === 'RUB') {
       return;
     }
-    fetch(`https://api.exchangeratesapi.io/latest?base=${salary.currency || 'USD' }&symbols=RUB`)
-    .then(r => r.json())
-    .then(o => {
-      const {rates: { RUB }} = o;
+    getUsdToRub().then(RUB => {
       setInRub(Math.floor(RUB * salary.amount));
     })
   }, [])

@@ -104,7 +104,7 @@ def get_all_offers_links(query, area):
     all_links = []
     page = 0
 
-    while page_is_not_empty:
+    while page_is_not_empty or page < 4:
         url = url_base + url_text + url_area + url_page + str(page)
         time.sleep(.5)
         html = get_html(url)
